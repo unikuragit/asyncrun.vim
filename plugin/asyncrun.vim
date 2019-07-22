@@ -625,6 +625,7 @@ function! s:AsyncRun_Job_Start(cmd)
 		else
 			let l:tmp = fnamemodify(tempname(), ':h') . '\asyncrun.cmd'
 			let l:run = ['@echo off', a:cmd]
+			call map(l:run, 'iconv(v:val, &encoding, ''cp932'') . "\r"')
 			call writefile(l:run, l:tmp)
 			let l:args += [l:tmp]
 		endif
@@ -867,6 +868,9 @@ function! s:ScriptWrite(command, pause)
 		let l:tmp = tempname()
 	endif
 	if v:version >= 700
+		if s:asyncrun_windows
+			call map(l:line, 'iconv(v:val, &encoding, ''cp932'') . "\r"')
+		endif
 		call writefile(l:line, l:tmp)
 	else
 		exe 'redir ! > '.fnameescape(l:tmp)
